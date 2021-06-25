@@ -10,7 +10,7 @@ type Questions = {
         avatar: string;
     }
     content: string;
-    isAnswered: string;
+    isAnswered: boolean;
     isHighLighted: boolean;
     likeCount: number;
     likeId: string | undefined;
@@ -22,7 +22,7 @@ type FirebaseQuestions = Record<string, {
         avatar: string;
     }
     content: string;
-    isAnswered: string;
+    isAnswered: boolean;
     isHighLighted: boolean;
     likes: Record<string, {
         authorId: string;
@@ -38,7 +38,8 @@ export function useRoom(roomId: string){
         const roomRef = database.ref(`rooms/${roomId}`);
         roomRef.on('value', room => {
             const databaseRoom = room.val();
-            const firebaseQuestions:FirebaseQuestions = databaseRoom.questions ?? {};
+            console.log(databaseRoom);
+            const firebaseQuestions:FirebaseQuestions = databaseRoom?.questions ?? {};
             const parsedQuestions = Object.entries(firebaseQuestions).map(([key, value]) => {
                 return {
                     id: key,
@@ -50,7 +51,7 @@ export function useRoom(roomId: string){
                     likeId: Object.entries(value.likes ?? {}).find(([key, like]) => like.authorId === user?.id)?.[0]
                 }
             });
-            setTitle(databaseRoom.title);
+            setTitle(databaseRoom?.title);
             setQuestions(parsedQuestions);
         });
 
